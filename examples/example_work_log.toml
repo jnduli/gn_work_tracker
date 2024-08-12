@@ -1,0 +1,28 @@
+version = "0.0.0"
+[[2024-06-03]]
+uuid = "60d8dcb7-6c59-4579-8bc3-906c3b08166b"
+description = "GUIX OS set up on laptop"
+status = "COMPLETED"
+times = [ [ "2024-06-03T06:00", "2024-06-03T10:00",],]
+notes = []
+
+[[2024-06-03]]
+uuid = "1b79478f-444b-480e-9f4b-84a14d250ca0"
+description = "Set up genenetwork locally and run unit tests successfully"
+status = "COMPLETED"
+times = [ [ "2024-06-04T06:00", "2024-06-04T08:00",],]
+notes = []
+
+[[2024-06-05]]
+uuid = "1b79478f-444b-480e-9f4b-84a14d250ca0"
+description = "Set up genenetwork3 locally and run unit tests successfully"
+status = "COMPLETED"
+times = [ [ "2024-06-05T06:00", "2024-06-05T08:00",],]
+notes = []
+
+[[2024-06-06]]
+uuid = "1b79478f-444b-480e-9f4b-84a14d250ca0"
+description = "Debug problems running genenetwork3 locally together with genenetwork2"
+status = "COMPLETED"
+times = [ [ "2024-06-06T06:00", "2024-06-06T08:00",],]
+notes = []

@@ -1,0 +1,25 @@
+\documentclass{article}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\begin{document}
+\title{GeneNetwork Work Log}
+\author{John Nduli}
+
+\maketitle
+\section{Month Log}
+{{ summary }}
+
+\section{Details}
+
+{% for date in dates.keys()|sort(reverse=True) %}
+\subsection{ {{ date }} }
+\begin{center}
+  \begin{tabular}{||p{10cm}|c||}
+    {% for ts in dates[date] %}
+      {{ ts.tex_description() }} & {{ ts.minutes() }} mins \\ \hline
+    {% endfor %}
+  \end{tabular}
+\end{center}
+{% endfor %}
+
+\end{document}
