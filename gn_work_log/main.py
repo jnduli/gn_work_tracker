@@ -110,6 +110,7 @@ class TomlDocument:
         with tempfile.NamedTemporaryFile(suffix=".tex") as fp:
             content = template.render(dates=filtered_data, summary=summary_msg)
             fp.write(content.encode())
+            fp.flush()
             pdflatex_flags = ["pdflatex", "-halt-on-error", "-output-directory", "/tmp", "-output-format=pdf", fp.name]
             temporary_path = pathlib.Path(fp.name)
             subprocess.run(pdflatex_flags)
