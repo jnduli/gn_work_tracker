@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gn-work-log"
+version = "0.1.0"
+requires-python = ">=3.10"
+authors = [
+  {name = "John Nduli", email = "rookie101@jnduli.co.ke"},
+]
+maintainers = [
+  {name = "John Nduli", email = "rookie101@jnduli.co.ke"}
+]
+description = "GeneNetwork Work Tracking Tool"
+readme = "README.md"
+dependencies = [
+  "toml",
+  "StrEnum",
+  "python-dateutil",
+  "jinja2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "coverage==7.4.4",
+  "pytest==8.1.1",
+  "mypy==1.9.0",
+]
+
+[project.scripts]
+work-log = "gn_work_log.main:main"
