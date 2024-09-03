@@ -4,6 +4,7 @@ from strenum import StrEnum
 from datetime import datetime, timezone
 from typing import List, Tuple, Optional
 import uuid
+import json
 
 
 DATE_FORMAT = "%Y-%m-%dT%H:%M"
@@ -14,6 +15,7 @@ class TaskStates(StrEnum):
     RUNNING = "RUNNING"
     PAUSED = "PAUSED"
     COMPLETED = "COMPLETED"
+
 
 def tex_clean_up(sentence: str) -> str:
     result = []
@@ -55,14 +57,17 @@ class Task:
             seconds += (end - start).seconds
         return seconds / 60
 
-    def report(self):
+    def terminal_report(self):
         status = ""
         notes = "\n".join(f"  - {x}" for x in self.notes)
         if notes:
             notes = f"\n{notes}"
         if self.status != TaskStates.COMPLETED:
             status = str(self.status)
-        return f"{self.uuid} - {self.description}: {self.minutes()} {status}{notes}"
+        return f"- {self.description}: {self.minutes()} {status}{notes}"
+
+    def terminal_report_with_uuid(self):
+        return f"{self.uuid} {self.terminal_report()}"
 
     def start(self):
         if self.status == TaskStates.CREATED or self.status == TaskStates.PAUSED:

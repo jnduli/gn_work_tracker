@@ -12,6 +12,8 @@ import jinja2
 import tempfile
 import subprocess
 
+import json
+
 from gn_work_log import tasks
 
 
@@ -62,14 +64,32 @@ class TomlDocument:
         self.write()
         print(f"task added: {task.uuid}")
 
-    def report_daily(self):
+    def report_daily_json(self):
+        corresponding_tasks = self.tasks_data.get(self.working_date.isoformat())
+        if corresponding_tasks is None:
+            print(json.dumps("No tasks found"))
+            return
+        serialized_tasks = [tasks.TomlHelper.serialize(t) for t in corresponding_tasks]
+        print(json.dumps(serialized_tasks))
+
+    def report_daily(self, output_format="terminal"):
+        if output_format == "json":
+            self.report_daily_json()
+            return
         corresponding_tasks = self.tasks_data.get(self.working_date.isoformat())
         if corresponding_tasks is None:
             print("No tasks found")
             return
         total_time = 0
         for t in corresponding_tasks:
-            print(t.report())
+            if output_format == "email":
+                print(t.terminal_report())
+            elif output_format == "terminal":
+                print(t.terminal_report_with_uuid())
+            else:
+                raise NotImplementedError(
+                    f"Output format: {output_format} not supported"
+                )
             total_time += t.minutes()
         print(f"Total time: {total_time // 60} Hrs { total_time % 60 } minutes")
 
@@ -111,12 +131,20 @@ class TomlDocument:
             content = template.render(dates=filtered_data, summary=summary_msg)
             fp.write(content.encode())
             fp.flush()
-            pdflatex_flags = ["pdflatex", "-halt-on-error", "-output-directory", "/tmp", "-output-format=pdf", fp.name]
+            pdflatex_flags = [
+                "pdflatex",
+                "-halt-on-error",
+                "-output-directory",
+                "/tmp",
+                "-output-format=pdf",
+                fp.name,
+            ]
             temporary_path = pathlib.Path(fp.name)
             subprocess.run(pdflatex_flags)
-            shutil.move(f"/tmp/{temporary_path.name.replace('.tex', '.pdf')}", final_filename)
+            shutil.move(
+                f"/tmp/{temporary_path.name.replace('.tex', '.pdf')}", final_filename
+            )
         print(f"Pdf file located at: {final_filename}")
-
 
     def update_task(self, uuid: str, action: Actions, note: Optional[str] = None):
         working_key = self.working_date.isoformat()
@@ -181,7 +209,8 @@ def main():
         help="File that contains all the work logs, also use env variable WORK_LOG",
     )
     parser.add_argument(
-        "--date", help="Date to used for various actions e.g. 2024-07-03, defaults to todays date"
+        "--date",
+        help="Date to used for various actions e.g. 2024-07-03, defaults to todays date",
     )
     parser.add_argument("--add", help="Add task for the day")
     parser.add_argument(
@@ -206,12 +235,25 @@ def main():
         help="What action to do to the passed in task",
         choices=list(Actions),
     )
-    parser.add_argument("--start", action="store_true", help="Start a task. Similar to --action start")
-    parser.add_argument("--pause", action="store_true", help="Pause a task. Similar to --action pause")
-    parser.add_argument("--complete", action="store_true", help="Complete a task. Similar to --action complete")
+    parser.add_argument(
+        "--start", action="store_true", help="Start a task. Similar to --action start"
+    )
+    parser.add_argument(
+        "--pause", action="store_true", help="Pause a task. Similar to --action pause"
+    )
+    parser.add_argument(
+        "--complete",
+        action="store_true",
+        help="Complete a task. Similar to --action complete",
+    )
     parser.add_argument("--note", help="Note to add. Works with --action note")
     parser.add_argument(
         "--errors", action="store_true", help="Potential errors in the work-log"
+    )
+    parser.add_argument(
+        "--output-format",
+        help="Output format we want, can be json, email or terminal",
+        default="terminal",
     )
     args = parser.parse_args()
 
@@ -232,7 +274,7 @@ def main():
         toml_doc.add_task(args.add, date_key)
 
     if args.report:
-        toml_doc.report_daily()
+        toml_doc.report_daily(args.output_format)
 
     if args.monthly_report:
         toml_doc.report_monthly()
