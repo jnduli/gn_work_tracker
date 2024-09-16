@@ -104,7 +104,7 @@ class TomlDocument:
             print(date_str)
             for t in ts:
                 total_time += t.minutes()
-                print(t.report())
+                print(t.terminal_report())
         print(f"Total time: {total_time // 60} Hrs { total_time % 60 } minutes")
 
     def monthly_pdf(self):
@@ -191,7 +191,7 @@ class TomlDocument:
         for date, errs in errors.items():
             print(f"\x1b[1;33m{date}\x1b[0m")
             for t in errs:
-                print(t.report())
+                print(t.terminal_report_with_uuid())
 
     def write(self):
         serialized_data = self.other_data.copy()
