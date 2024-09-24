@@ -69,7 +69,10 @@ class TomlDocument:
         if corresponding_tasks is None:
             print(json.dumps("No tasks found"))
             return
-        serialized_tasks = [tasks.TomlHelper.serialize(t) for t in corresponding_tasks]
+        serialized_tasks = [
+            tasks.TomlHelper.serialize(t, with_minutes=True)
+            for t in corresponding_tasks
+        ]
         print(json.dumps(serialized_tasks))
 
     def report_daily(self, output_format="terminal"):

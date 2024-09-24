@@ -4,7 +4,6 @@ from strenum import StrEnum
 from datetime import datetime, timezone
 from typing import List, Tuple, Optional
 import uuid
-import json
 
 
 DATE_FORMAT = "%Y-%m-%dT%H:%M"
@@ -115,7 +114,6 @@ class Task:
 
 
 class TomlHelper:
-
     @staticmethod
     def deserialize(toml_dict: dict) -> Task:
         times = []
@@ -128,20 +126,26 @@ class TomlHelper:
             )
             times.append((x, y))
         toml_dict["times"] = times
+        if "minutes" in toml_dict:
+            del toml_dict["minutes"]
         return Task(**toml_dict)
 
     @staticmethod
-    def serialize(task: Task) -> dict:
+    def serialize(task: Task, with_minutes=False) -> dict:
         times = []
         for x, y in task.times:
             new_start = x.strftime(DATE_FORMAT)
             new_end = str(y) if y is None else y.strftime(DATE_FORMAT)
             times.append((new_start, new_end))
 
-        return {
+        bare_bones = {
             "uuid": str(task.uuid),
             "description": task.description,
             "status": str(task.status),
             "times": times,
             "notes": task.notes,
         }
+
+        if with_minutes:
+            bare_bones["minutes"] = task.minutes()
+        return bare_bones
