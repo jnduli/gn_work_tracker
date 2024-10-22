@@ -70,7 +70,7 @@ class TomlDocument:
             print(json.dumps("No tasks found"))
             return
         serialized_tasks = [
-            tasks.TomlHelper.serialize(t, with_minutes=True)
+            tasks.TomlHelper.serialize(t)
             for t in corresponding_tasks
         ]
         print(json.dumps(serialized_tasks))

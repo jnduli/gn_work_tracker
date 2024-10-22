@@ -131,21 +131,16 @@ class TomlHelper:
         return Task(**toml_dict)
 
     @staticmethod
-    def serialize(task: Task, with_minutes=False) -> dict:
+    def serialize(task: Task) -> dict:
         times = []
         for x, y in task.times:
             new_start = x.strftime(DATE_FORMAT)
             new_end = str(y) if y is None else y.strftime(DATE_FORMAT)
             times.append((new_start, new_end))
-
-        bare_bones = {
+        return {
             "uuid": str(task.uuid),
             "description": task.description,
             "status": str(task.status),
             "times": times,
             "notes": task.notes,
         }
-
-        if with_minutes:
-            bare_bones["minutes"] = task.minutes()
-        return bare_bones
